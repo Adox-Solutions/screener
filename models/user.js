@@ -1,8 +1,9 @@
+// models/user.js
+
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const User = require('./user');
 
-const Screen = sequelize.define('Screen', {
+const User = sequelize.define('User', {
   id: {
     type: DataTypes.UUID,
     defaultValue: DataTypes.UUIDV4,
@@ -11,16 +12,22 @@ const Screen = sequelize.define('Screen', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
     unique: true,
   },
   image_url: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 }, {
   timestamps: true,
 });
 
-User.hasOne(Screen, { foreignKey: 'user_id' });
-Screen.belongsTo(User, { foreignKey: 'user_id' });
-module.exports = Screen; 
+module.exports = User;
