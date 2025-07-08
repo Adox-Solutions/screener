@@ -1,22 +1,23 @@
 // Main entry point for the application
 const PORT = process.env.PORT || 3000;
-const app = require('./app');
-const sequelize = require('./config/database');
-require('./models/user');
-require('./models/screen');
-
+const app = require("./app");
+const sequelize = require("./config/database");
+require("./models/user");
+require("./models/screen");
 
 (async () => {
   try {
     await sequelize.authenticate();
-    console.log('Database connected.');
+    console.log("Database connected.");
     await sequelize.sync();
-    console.log('Database synchronized.');
+    console.log("Database synchronized.");
     app.listen(PORT, () => {
+      console.log(process.env.PORT, process.env.DB_NAME);
+
       console.log(`Server is running on port ${PORT}`);
     });
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error("Unable to connect to the database:", error);
     process.exit(1);
   }
 })();
