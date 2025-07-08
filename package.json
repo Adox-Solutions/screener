@@ -1,4 +1,16 @@
 {
+  "name": "screener",
+  "version": "1.0.0",
+  "description": "Backend server for school management using Express and Sequelize",
+  "main": "server.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development node server.js",
+    "dev": "cross-env NODE_ENV=development nodemon server.js",
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sabir",
+  "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -10,8 +22,8 @@
     "mysql2": "^3.14.1",
     "sequelize": "^6.37.7"
   },
-  "scripts": {
-    "start": "cross-env NODE_ENV=development node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "devDependencies": {
+    "nodemon": "^3.0.3",
+    "eslint": "^8.58.0"
   }
 }
