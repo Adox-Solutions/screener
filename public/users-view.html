@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>View User</title>
+  <style>
+    body { background: #f7f7f7; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; }
+    .container { max-width: 400px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 2rem; }
+    h2 { color: #2898d3; text-align: center; }
+    .user-img { display: block; margin: 0 auto 1rem auto; width: 80px; height: 80px; border-radius: 50%; object-fit: cover; background: #e0e0e0; }
+    .info { margin-bottom: 1rem; }
+    .label { color: #888; font-size: 0.97rem; }
+    .value { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .actions { text-align: center; margin-top: 1.5rem; }
+    a.button { background: #2898d3; color: #fff; padding: 0.5rem 1.2rem; border-radius: 5px; text-decoration: none; margin: 0 0.5rem; font-size: 0.97rem; }
+    a.button:hover { background: #207bb0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>User Details</h2>
+    <img id="userImg" class="user-img" src="" alt="User Image" style="display:none;">
+    <div class="info"><span class="label">Name:</span> <span class="value" id="userName"></span></div>
+    <div class="info"><span class="label">Email:</span> <span class="value" id="userEmail"></span></div>
+    <div class="info"><span class="label">ID:</span> <span class="value" id="userId"></span></div>
+    <div class="actions">
+      <a class="button" href="/home">Back to List</a>
+      <a class="button" id="editBtn" href="#">Edit</a>
+    </div>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+    fetch(`/users/${id}`)
+      .then(res => res.json())
+      .then(user => {
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('userId').textContent = user.id;
+        if (user.image_url) {
+          const img = document.getElementById('userImg');
+          img.src = user.image_url;
+          img.style.display = 'block';
+        }
+        document.getElementById('editBtn').href = `/users-edit.html?id=${user.id}`;
+      });
+  </script>
+</body>
+</html> 

@@ -27,8 +27,6 @@ app.use('/', commonRoutes);
 const screenRoutes = require('./routes/screen');
 app.use('/screens', screenRoutes);
 
-const userRoutes = require('./routes/user');
-app.use('/users', userRoutes);
 
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
@@ -42,5 +40,20 @@ app.get('/register', (req, res) => {
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
+app.get('/home', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'users.html'));
+});
+app.get('/users/view', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'users-view.html'));
+});
+app.get('/users/edit', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'users-edit.html'));
+});
+app.get('/users/add', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'users-add.html'));
+});
+
+const userRoutes = require('./routes/user');
+app.use('/users', userRoutes);
 
 module.exports = app; 

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>User List</title>
+  <style>
+    body {
+      background: #f7f7f7;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      padding: 2rem;
+    }
+
+    h2 {
+      color: #2898d3;
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+    }
+
+    th,
+    td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #e0e0e0;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f8fc;
+      color: #2898d3;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    a.button {
+      background: #2898d3;
+      color: #fff;
+      padding: 0.4rem 1rem;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-right: 0.5rem;
+      font-size: 0.97rem;
+    }
+
+    a.button:hover {
+      background: #207bb0;
+    }
+
+    .add-user {
+      display: block;
+      margin: 1rem 0;
+      text-align: right;
+    }
+
+    .add-user a {
+      background: #28d39a;
+      color: #fff;
+      padding: 0.5rem 1.2rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .add-user a:hover {
+      background: #1ea97a;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>User List</h2>
+    <div class="add-user">
+      <a href="/users/add">Add User</a>
+    </div>
+    <table id="userTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <script>
+    fetch('/users/')
+      .then(res => res.json())
+      .then(users => {
+        console.log(users); // Log users to the browser console
+        const tbody = document.querySelector('#userTable tbody');
+        tbody.innerHTML = users.map(user => `
+          <tr>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>${user.image_url ? `<img src="${user.image_url}" alt="User Image" style="width:40px;height:40px;border-radius:50%;object-fit:cover;">` : ''}</td>
+            <td>
+              <a class="button" href="/users-view.html?id=${user.id}">View</a>
+              <a class="button" href="/users-edit.html?id=${user.id}">Edit</a>
+            </td>
+          </tr>
+        `).join('');
+      });
+  </script>
+</body>
+
+</html>

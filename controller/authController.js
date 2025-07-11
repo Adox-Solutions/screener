@@ -1,35 +1,31 @@
 const User = require('../models/user');
 const bcryptService = require('../services/bcryptService');
 
+// Helper to check if request expects JSON
+function expectsJson(req) {
+  return req.xhr || req.headers.accept.indexOf('json') > -1;
+}
+
 // Register a new user
 exports.register = async (req, res) => {
   try {
-    // Handle Multer file filter errors
-    if (req.fileValidationError) {
-      return res.status(400).json({ error: req.fileValidationError });
-    }
-    if (req.error && req.error.code === 'DUPLICATE_BASE_NAME') {
-      return res.status(400).json({ error: req.error.message });
-    }
-
     const { name, email, password } = req.body;
     let image_url = null;
 
-    // If an image was uploaded, construct its URL
     if (req.file) {
       image_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
     }
 
-    // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ error: 'User already exists with this email' });
+      if (expectsJson(req)) {
+        return res.status(400).json({ error: 'User already exists with this email' });
+      } else {
+        return res.redirect('/register?error=exists');
+      }
     }
 
-    // Hash the password
     const hashedPassword = await bcryptService.hashPassword(password);
-
-    // Create new user
     const newUser = await User.create({
       name,
       email,
@@ -37,22 +33,27 @@ exports.register = async (req, res) => {
       image_url
     });
 
-    res.status(201).json({
-      message: 'User registered successfully',
-      user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
-        image_url: newUser.image_url
-      }
-    });
-  } catch (error) {
-    // Handle Multer duplicate base name error
-    if (error.code === 'DUPLICATE_BASE_NAME') {
-      return res.status(400).json({ error: error.message });
+    if (expectsJson(req)) {
+      res.status(201).json({
+        message: 'User registered successfully',
+        user: {
+          id: newUser.id,
+          name: newUser.name,
+          email: newUser.email,
+          image_url: newUser.image_url
+        }
+      });
+    } else if (req.body.from_admin) {
+      res.redirect('/users');
+    } else {
+      res.redirect('/login');
     }
-    console.error('Registration error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+  } catch (error) {
+    if (expectsJson(req)) {
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.redirect('/register?error=server');
+    }
   }
 };
 
@@ -62,25 +63,39 @@ exports.login = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      if (expectsJson(req)) {
+        return res.status(400).json({ error: 'Invalid email or password' });
+      } else {
+        return res.redirect('/login?error=invalid');
+      }
     }
     const isMatch = await bcryptService.comparePassword(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      if (expectsJson(req)) {
+        return res.status(400).json({ error: 'Invalid email or password' });
+      } else {
+        return res.redirect('/login?error=invalid');
+      }
     }
-    // Set user info in session
     req.session.user = {
       id: user.id,
       name: user.name,
       email: user.email,
       image_url: user.image_url
     };
-    res.status(200).json({
-      message: 'Login successful',
-      user: req.session.user
-    });
+    if (expectsJson(req)) {
+      res.status(200).json({
+        message: 'Login successful',
+        user: req.session.user
+      });
+    } else {
+      res.redirect('/users');
+    }
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    if (expectsJson(req)) {
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.redirect('/login?error=server');
+    }
   }
 }; 

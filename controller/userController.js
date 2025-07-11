@@ -1,6 +1,15 @@
 const User = require('../models/user');
 const Screen = require('../models/screen');
 
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll({ attributes: { exclude: ['password'] } });
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 exports.getUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id, {
