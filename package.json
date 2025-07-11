@@ -1,7 +1,7 @@
 {
   "name": "screener",
   "version": "1.0.0",
-  "description": "Backend server for school management using Express and Sequelize",
+  "description": "Backend server using Express and Sequelize",
   "main": "server.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development node server.js",
