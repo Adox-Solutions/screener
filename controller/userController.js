@@ -26,17 +26,28 @@ exports.getUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    const { name, email, image_url } = req.body;
+    const { name, email } = req.body || {};
+    let image_url = null;
+
+    // Handle file upload if present
+    if (req.file) {
+      image_url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    }
+
     const user = await User.findByPk(req.params.id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-    user.name = name ?? user.name;
-    user.email = email ?? user.email;
-    user.image_url = image_url ?? user.image_url;
+
+    // Update only provided fields
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (image_url) user.image_url = image_url;
+
     await user.save();
     res.json({ message: 'User updated', user });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

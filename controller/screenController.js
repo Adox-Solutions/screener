@@ -43,6 +43,7 @@ exports.updateScreen = async (req, res) => {
     await screen.save();
     res.json(screen);
   } catch (error) {
+    console.log(error)
     res.status(400).json({ error: error.message });
   }
 };
