@@ -89,7 +89,7 @@ exports.login = async (req, res) => {
         user: req.session.user
       });
     } else {
-      res.redirect('/users');
+      res.redirect('/home');
     }
   } catch (error) {
     if (expectsJson(req)) {
